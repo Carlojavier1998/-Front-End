@@ -1,22 +1,35 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Dimensions,
-  Alert,
-} from "react-native";
+import { StyleSheet, Text, View, TextInput, Dimensions, Alert } from "react-native";
 import { Button } from "react-native-paper";
 import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
 
-export default function login() {
+const Login = ({navigation}) => {
   const { width, height } = Dimensions.get("window");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const Pass = "123456";
-  const user = "Admin";
+  const [username, setUsername] = useState('Admin');
+  const [password, setPassword] = useState('');
+  const Pass = '123456';
+  const user = 'Admin';
+
+  const  verification = () =>{
+    if ([username, password].includes('')) {
+      Alert.alert(
+        'Error',
+        'there are unfilled fields',
+        [{ text: 'Ok' }, { text: 'Cancel' }]
+      )
+    }
+    else if (username === user && password === Pass) {
+      navigation.navigate('Home');
+    } else {
+      Alert.alert(
+        'Error',
+        'Incorrect password or username',
+        [{ text: 'Ok' }, { text: 'Cancel' }]
+      )
+    }
+  }
+
   function SvgTop() {
     return (
       <Svg height="200" width="100%" viewBox="0 0 1440 320" style={styles.svg}>
@@ -27,29 +40,12 @@ export default function login() {
       </Svg>
     );
   }
-  const login = () => {
-    if ([username, password].includes("")) {
-      Alert.alert("Error", "there are unfilled fields", [
-        { text: "Ok" },
-        { text: "Cancel" },
-      ]);
-    } else if (username === user && password === Pass) {
-      Alert.alert("successful", "welcome", [
-        { text: "Ok" },
-        { text: "Cancel" },
-      ]);
-    } else {
-      Alert.alert("Error", "Incorrect password or username", [
-        { text: "Ok" },
-        { text: "Cancel" },
-      ]);
-    }
-  };
+
   return (
     <View style={styles.container}>
       <SvgTop />
       <Text style={styles.titulo}>Login</Text>
-      <Text style={styles.subtitulo}>sing In to yoy¿ur account</Text>
+      <Text style={styles.subtitulo}>sign Into your account?</Text>
       <TextInput
         style={styles.textInput}
         placeholder="user"
@@ -63,13 +59,14 @@ export default function login() {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button style={styles.btn_login} mode="contained" onPress={login}>
+      <Button style={styles.btn_login} mode="contained" onPress={verification}>
         Sign in
       </Button>
       <StatusBar style="auto" />
     </View>
   );
-}
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -101,3 +98,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#4682B4",
   },
 });
+export default Login
