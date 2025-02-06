@@ -12,7 +12,7 @@ import {
   ScrollView,
   ActivityIndicator
 } from "react-native";
-import {  Button ,Menu } from 'react-native-paper';
+import {  Button ,Menu , Searchbar} from 'react-native-paper';
 import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
 
 const Menupanel= () => {
@@ -37,6 +37,22 @@ const Menupanel= () => {
 
   return (
     <View style={styles.container}>
+        <Searchbar
+      placeholder="Search..."
+      selectionColor={'#008000'}
+      color='black'
+      iconColor='#094293'
+      // value={search}
+      style={{
+        backgroundColor: '#FFFFFF',
+        margin: 4,
+        textDecorationLine: 'line-through',
+        marginRight: 'auto',
+        marginLeft: 'auto',
+        marginTop:100,
+        marginBottom:-70
+      }}
+    />
       <Text style={styles.titulo}>productListingScreen</Text>
       <FlatList
         data={produc}

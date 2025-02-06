@@ -1,12 +1,12 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Alert } from "react-native";
+import { StyleSheet, Text, View, Alert,ActivityIndicator } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 
 const Login = ({ navigation }) => {
   const [correo, setCorreo] = useState("aloga.carlo.lopez@gmail.com");
   const [contraseña, setContraseña] = useState("");
-
+  const [show, setShoe] = useState(false)
   const handleLogin = async () => {
     const user = {
       correo,
@@ -19,6 +19,7 @@ const Login = ({ navigation }) => {
       ]);
       return;
     }
+    loadIt();
     try {
       const response = await fetch("https://apiweb-app.somee.com/api/Auth/login", {
         method: "POST",
@@ -58,6 +59,12 @@ const Login = ({ navigation }) => {
       console.error("Error en la solicitud:", error);
       Alert.alert("Error", "No se pudo realizar la solicitud.");
     }
+  };
+  const loadIt  = () => {
+    setShoe(true);
+    setTimeout(() => {
+      setShoe(false);
+    }, 3000);
   };
   return (
     <View style={styles.container}>
@@ -110,6 +117,7 @@ const Login = ({ navigation }) => {
       <Button style={styles.btn_login} mode="contained" onPress={handleLogin}>
         Sign in
       </Button>
+      <ActivityIndicator size="large" color="#0000ff" animating={show}/>
       <StatusBar style="auto" />
     </View>
   );
