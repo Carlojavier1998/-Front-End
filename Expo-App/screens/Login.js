@@ -1,7 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Alert } from "react-native";
-import axios from "axios";
 import { Button, TextInput } from "react-native-paper";
 
 const Login = ({ navigation }) => {
@@ -14,27 +13,51 @@ const Login = ({ navigation }) => {
       contraseña,
     };
     if ([correo, contraseña].includes("")) {
-      Alert.alert("Error", "there are unfilled fields", [
+      Alert.alert("Error", "Hay campos sin completar", [
         { text: "Ok" },
         { text: "Cancel" },
       ]);
       return;
     }
     try {
-      const { data } = await axios.post(
-        "https://apiweb-app.somee.com/api/Auth/login",
-        user
-      );
-      const res = JSON.parse(data);
-      console.log("consola" + res);
-      if (res.status.includes("Successful")) {
-        Alert.alert("Successful", "Welcome", [
-          { text: "Ok" },
-          { text: "Cancel" },
-        ]);
-        navigation.navigate("Menupanel");
+      const response = await fetch("https://apiweb-app.somee.com/api/Auth/login", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+      const data = await response.json();
+      console.log("Respuesta de la API:", data);
+      switch (data.status) {
+        case "Successful":
+          navigation.navigate("Menupanel");
+          break;
+        case "FailedAttempt":
+          Alert.alert("Error", "Contraseña incorrecta.", [
+            { text: "Ok" },
+          ]);
+          break;
+        case "InvalidAccount":
+          Alert.alert("Error", "La cuenta no existe.", [
+            { text: "Ok" },
+          ]);
+          break;
+          case "NonActiveAccount":
+          Alert.alert("Error", "Cuenta no activa. Verifica tu correo.", [
+            { text: "Ok" },
+          ]);
+          break;
+        default:
+          Alert.alert("Error", "Estado inesperado.", [
+            { text: "Ok" },
+          ]);
+          break;
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error en la solicitud:", error);
+      Alert.alert("Error", "No se pudo realizar la solicitud.");
+    }
   };
   return (
     <View style={styles.container}>

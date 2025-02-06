@@ -4,34 +4,63 @@ import { StyleSheet, Text, View, Dimensions, Alert } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
 
-const Register= ({ navigation }) => {
-  const { width, height } = Dimensions.get("window");
-  const [username, setUsername] = useState("Admin");
-  const [password, setPassword] = useState("");
-  const Pass = "123456";
-  const user = "Admin";
-
-  const verification = () => {
-    if ([username, password].includes("")) {
-      Alert.alert("Error", "there are unfilled fields", [
-        { text: "Ok" },
-        { text: "Cancel" },
-      ]);
-    } else if (username === user && password === Pass) {
-      navigation.navigate("Home");
-    } else {
-      Alert.alert("Error", "Incorrect password or username", [
-        { text: "Ok" },
-        { text: "Cancel" },
-      ]);
+const Register = () => {
+  const [correo, setCorreo] = useState("aloga.carlo.lopez@gmail.com");
+  const [contraseña, setContraseña] = useState("");
+  const [confirmContraseña, setConfirmContraseña] = useState("");
+  const createAccount = async () => {
+    const user = {
+      correo,
+      contraseña,
+    };
+    if ([correo, contraseña].includes("")) {
+      Alert.alert("Error", "Hay campos sin completar", [{ text: "Ok" }]);
+      return;
+    }
+    if (contraseña !== confirmContraseña) {
+      Alert.alert("Error", "Las contraseñas no coinciden.", [{ text: "Ok" }]);
+      return;
+    }
+    try {
+      const response = await fetch(
+        "https://apiweb-app.somee.com/api/Auth/registro",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(user),
+        }
+      );
+      const data = await response.json();
+      console.log("Respuesta de la API:", data);
+      switch (data.status) {
+        case "Successful":
+          Alert.alert(
+            "Exitoso",
+            "Usuario registrado, verifica tu correo para activar tu cuenta.",
+            [{ text: "Ok" }]
+          );
+          break;
+        case "Conflict":
+          Alert.alert("Conflicto", "El usuario ya existe.", [{ text: "Ok" }]);
+          break;
+        default:
+          Alert.alert("Error", "Estado inesperado.", [{ text: "Ok" }]);
+          break;
+      }
+    } catch (error) {
+      console.error("Error en la solicitud:", error);
+      Alert.alert("Error", "No se pudo realizar la solicitud.");
     }
   };
+
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Login here</Text>
       <Text style={styles.subtitulo}>Welcomen back your've be missed!</Text>
       <TextInput
-        label="User"
+        label="Email"
         selectionColor={"#008000"}
         cursorColor={"#008000"}
         underlineColor={"transparent"}
@@ -48,11 +77,11 @@ const Register= ({ navigation }) => {
           marginRight: "auto",
           marginLeft: "auto",
         }}
-        value={username}
-        onChangeText={setUsername}
+        value={correo}
+        onChangeText={setCorreo}
       />
       <TextInput
-        label="User"
+        label="password"
         selectionColor={"#008000"}
         cursorColor={"#008000"}
         underlineColor={"transparent"}
@@ -70,12 +99,12 @@ const Register= ({ navigation }) => {
           marginLeft: "auto",
           marginTop: 5,
         }}
-        value={password}
-        onChangeText={setPassword}
+        value={contraseña}
+        onChangeText={setContraseña}
         secureTextEntry
       />
       <TextInput
-        label="User"
+        label="Confirm Password"
         selectionColor={"#008000"}
         cursorColor={"#008000"}
         underlineColor={"transparent"}
@@ -93,35 +122,12 @@ const Register= ({ navigation }) => {
           marginLeft: "auto",
           marginTop: 5,
         }}
-        value={password}
-        onChangeText={setPassword}
+        value={confirmContraseña}
+        onChangeText={setConfirmContraseña}
         secureTextEntry
       />
-       <TextInput
-        label="User"
-        selectionColor={"#008000"}
-        cursorColor={"#008000"}
-        underlineColor={"transparent"}
-        textColor="#000000"
-        activeUnderlineColor="#4B0082"
-        mode="flat"
-        textContentType="oneTimeCode"
-        style={{
-          width: 300,
-          textDecorationLine: "line-through",
-          borderRadius: 20,
-          backgroundColor: "#ffffff",
-          paddingVertical: 1,
-          marginRight: "auto",
-          marginLeft: "auto",
-          marginTop: 5,
-        }}
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <Button style={styles.btn_login} mode="contained" onPress={verification}>
-      create account
+      <Button style={styles.btn_login} mode="contained" onPress={createAccount}>
+        create account
       </Button>
       <StatusBar style="auto" />
     </View>
