@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Dimensions, Alert } from "react-native";
+import { StyleSheet, Text, View, Dimensions, Alert,ActivityIndicator} from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
 
@@ -8,6 +8,7 @@ const Register = () => {
   const [correo, setCorreo] = useState("aloga.carlo.lopez@gmail.com");
   const [contraseña, setContraseña] = useState("");
   const [confirmContraseña, setConfirmContraseña] = useState("");
+  const [show, setShow] = useState(false);
   const createAccount = async () => {
     const user = {
       correo,
@@ -21,6 +22,7 @@ const Register = () => {
       Alert.alert("Error", "Las contraseñas no coinciden.", [{ text: "Ok" }]);
       return;
     }
+    loadIt();
     try {
       const response = await fetch(
         "https://apiweb-app.somee.com/api/Auth/registro",
@@ -53,6 +55,12 @@ const Register = () => {
       console.error("Error en la solicitud:", error);
       Alert.alert("Error", "No se pudo realizar la solicitud.");
     }
+    finally {
+      setShow(false);
+    }
+  };
+  const loadIt = () => {
+    setShow(true);
   };
 
   return (
@@ -126,9 +134,19 @@ const Register = () => {
         onChangeText={setConfirmContraseña}
         secureTextEntry
       />
-      <Button style={styles.btn_login} mode="contained" onPress={createAccount}>
-        create account
-      </Button>
+      <View>
+              {show ? (
+                <ActivityIndicator size="large" color="#0000ff" />
+              ) : (
+                <Button
+                  style={styles.btn_login}
+                  mode="contained"
+                  onPress={createAccount}
+                >
+                  create account
+                </Button>
+              )}
+            </View>
       <StatusBar style="auto" />
     </View>
   );
