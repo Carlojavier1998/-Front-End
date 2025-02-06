@@ -1,12 +1,12 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Alert,ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, Alert, ActivityIndicator } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 
 const Login = ({ navigation }) => {
   const [correo, setCorreo] = useState("aloga.carlo.lopez@gmail.com");
   const [contraseña, setContraseña] = useState("");
-  const [show, setShoe] = useState(false)
+  const [show, setShow] = useState(false);
   const handleLogin = async () => {
     const user = {
       correo,
@@ -21,13 +21,16 @@ const Login = ({ navigation }) => {
     }
     loadIt();
     try {
-      const response = await fetch("https://apiweb-app.somee.com/api/Auth/login", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(user),
-      });
+      const response = await fetch(
+        "https://apiweb-app.somee.com/api/Auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(user),
+        }
+      );
       const data = await response.json();
       console.log("Respuesta de la API:", data);
       switch (data.status) {
@@ -35,36 +38,29 @@ const Login = ({ navigation }) => {
           navigation.navigate("Menupanel");
           break;
         case "FailedAttempt":
-          Alert.alert("Error", "Contraseña incorrecta.", [
-            { text: "Ok" },
-          ]);
+          Alert.alert("Error", "Contraseña incorrecta.", [{ text: "Ok" }]);
           break;
         case "InvalidAccount":
-          Alert.alert("Error", "La cuenta no existe.", [
-            { text: "Ok" },
-          ]);
+          Alert.alert("Error", "La cuenta no existe.", [{ text: "Ok" }]);
           break;
-          case "NonActiveAccount":
+        case "NonActiveAccount":
           Alert.alert("Error", "Cuenta no activa. Verifica tu correo.", [
             { text: "Ok" },
           ]);
           break;
         default:
-          Alert.alert("Error", "Estado inesperado.", [
-            { text: "Ok" },
-          ]);
+          Alert.alert("Error", "Estado inesperado.", [{ text: "Ok" }]);
           break;
       }
     } catch (error) {
       console.error("Error en la solicitud:", error);
       Alert.alert("Error", "No se pudo realizar la solicitud.");
+    } finally {
+      setShow(false);
     }
   };
-  const loadIt  = () => {
-    setShoe(true);
-    setTimeout(() => {
-      setShoe(false);
-    }, 3000);
+  const loadIt = () => {
+    setShow(true);
   };
   return (
     <View style={styles.container}>
@@ -114,10 +110,19 @@ const Login = ({ navigation }) => {
         onChangeText={setContraseña}
         secureTextEntry
       />
-      <Button style={styles.btn_login} mode="contained" onPress={handleLogin}>
-        Sign in
-      </Button>
-      <ActivityIndicator size="large" color="#0000ff" animating={show}/>
+      <View>
+        {show ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          <Button
+            style={styles.btn_login}
+            mode="contained"
+            onPress={handleLogin}
+          >
+            Sign in
+          </Button>
+        )}
+      </View>
       <StatusBar style="auto" />
     </View>
   );
