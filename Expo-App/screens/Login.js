@@ -1,11 +1,21 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Alert, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Alert,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import { Button, TextInput } from "react-native-paper";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const Login = ({ navigation }) => {
   const [correo, setCorreo] = useState("aloga.carlo.lopez@gmail.com");
   const [contraseña, setContraseña] = useState("");
+  const [showContraseña, setShowContraseña] = useState(false);
+
   const [show, setShow] = useState(false);
   const handleLogin = async () => {
     const user = {
@@ -108,7 +118,22 @@ const Login = ({ navigation }) => {
         }}
         value={contraseña}
         onChangeText={setContraseña}
-        secureTextEntry
+        secureTextEntry={!showContraseña}
+        right={
+          <TextInput.Icon
+            icon={() => (
+              <TouchableOpacity
+                onPress={() => setShowContraseña(!showContraseña)}
+              >
+                <MaterialIcons
+                  name={showContraseña ? "visibility" : "visibility-off"}
+                  size={24}
+                  color={"#000000"}
+                />
+              </TouchableOpacity>
+            )}
+          />
+        }
       />
       <View>
         {show ? (
@@ -154,6 +179,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: "auto",
     marginLeft: "auto",
-  },
+  }
 });
 export default Login;

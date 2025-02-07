@@ -1,13 +1,21 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Dimensions, Alert,ActivityIndicator} from "react-native";
-import { Button, TextInput } from "react-native-paper";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import { Button, TextInput, Checkbox } from "react-native-paper";
 import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
 
 const Register = () => {
   const [correo, setCorreo] = useState("aloga.carlo.lopez@gmail.com");
   const [contraseña, setContraseña] = useState("");
   const [confirmContraseña, setConfirmContraseña] = useState("");
+  const [showContraseña, setShowContraseña] = useState(false);
   const [show, setShow] = useState(false);
   const createAccount = async () => {
     const user = {
@@ -54,8 +62,7 @@ const Register = () => {
     } catch (error) {
       console.error("Error en la solicitud:", error);
       Alert.alert("Error", "No se pudo realizar la solicitud.");
-    }
-    finally {
+    } finally {
       setShow(false);
     }
   };
@@ -109,7 +116,7 @@ const Register = () => {
         }}
         value={contraseña}
         onChangeText={setContraseña}
-        secureTextEntry
+        secureTextEntry={!showContraseña}
       />
       <TextInput
         label="Confirm Password"
@@ -132,26 +139,41 @@ const Register = () => {
         }}
         value={confirmContraseña}
         onChangeText={setConfirmContraseña}
-        secureTextEntry
+        secureTextEntry={!showContraseña}
       />
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          marginTop: 10,
+          marginLeft: -150,
+        }}
+      >
+        <Checkbox
+          status={showContraseña ? "checked" : "unchecked"}
+          onPress={() => {
+            setShowContraseña(!showContraseña);
+          }}
+        />
+        <Text>Mostrar contraseña</Text>
+      </View>
       <View>
-              {show ? (
-                <ActivityIndicator size="large" color="#0000ff" />
-              ) : (
-                <Button
-                  style={styles.btn_login}
-                  mode="contained"
-                  onPress={createAccount}
-                >
-                  create account
-                </Button>
-              )}
-            </View>
+        {show ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          <Button
+            style={styles.btn_login}
+            mode="contained"
+            onPress={createAccount}
+          >
+            create account
+          </Button>
+        )}
+      </View>
       <StatusBar style="auto" />
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -163,13 +185,14 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: "#F5511E",
     fontWeight: "bold",
+    top:50
   },
   subtitulo: {
     fontSize: 20,
     color: "#000000",
     margin: 80,
     textAlign: "center",
-    bottom: 70,
+    bottom: 30,
   },
   btn_login: {
     marginTop: 20,
