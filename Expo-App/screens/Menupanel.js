@@ -1,69 +1,59 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Dimensions,
-  Alert,
-  FlatList,
-  Image,
-  ScrollView,
-  ActivityIndicator
-} from "react-native";
-import {  Button ,Menu , Searchbar} from 'react-native-paper';
-import Svg, { Path, Defs, LinearGradient, Stop } from "react-native-svg";
+import { StyleSheet, Text, View, FlatList, Image } from "react-native";
+import { Searchbar } from "react-native-paper";
 
-const Menupanel= () => {
+const Menupanel = () => {
   const [produc, setProduc] = useState([]);
+  const [search, setSearch] = useState("");
   const url = "https://fakestoreapi.com/products";
-
   useEffect(() => {
     getProducto();
   }, []);
-
   const getProducto = () => {
     fetch(url)
-      .then((res) => {
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
         setProduc(data);
         console.log(data);
       });
   };
-
-
+  const onSearchChange = (searchbar) => {
+    setSearch(searchbar);
+  };
+  const filteredProducts = produc.filter((product) =>
+    product.title.toLowerCase().includes(search.toLowerCase())
+  );
   return (
     <View style={styles.container}>
-        <Searchbar
-      placeholder="Search..."
-      selectionColor={'#008000'}
-      color='black'
-      iconColor='#094293'
-      // value={search}
-      style={{
-        backgroundColor: '#FFFFFF',
-        margin: 4,
-        textDecorationLine: 'line-through',
-        marginRight: 'auto',
-        marginLeft: 'auto',
-        marginTop:100,
-        marginBottom:-70
-      }}
-    />
+      <Searchbar
+        placeholder="Search..."
+        selectionColor={"#008000"}
+        color="black"
+        iconColor="#094293"
+        value={search}
+        onChangeText={onSearchChange}
+        style={{
+          backgroundColor: "#FFFFFF",
+          margin: 4,
+          marginTop: 100,
+          marginBottom: -70,
+        }}
+      />
       <Text style={styles.titulo}>productListingScreen</Text>
       <FlatList
-        data={produc}
-        renderItem={({item}) => (
+        data={filteredProducts}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
           <View style={styles.cardContarner}>
-            <Image source={{uri: item.image}} style={styles.imagen} />
-            <Text style={{fontSize:20,textAlign:"center",fontWeight:'bold'}}>
+            <Image source={{ uri: item.image }} style={styles.imagen} />
+            <Text
+              style={{ fontSize: 20, textAlign: "center", fontWeight: "bold" }}
+            >
               {item.title}
             </Text>
-            <Text style={{fontSize:18,textAlign:"center"}}>
-             ${item.price}
+            <Text style={{ fontSize: 18, textAlign: "center" }}>
+              ${item.price}
             </Text>
           </View>
         )}
@@ -71,7 +61,6 @@ const Menupanel= () => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -96,9 +85,9 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 20,
     color: "gray",
-    textAlign:'center',
-    marginTop:100,
-    marginBottom:50
+    textAlign: "center",
+    marginTop: 100,
+    marginBottom: 50,
   },
 });
 export default Menupanel;
